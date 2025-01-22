@@ -1,47 +1,78 @@
 using UnityEngine;
-
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Collider))]
+using CustomUnityLibrary;
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    private Rigidbody2D rb;
-    private Collider2D cd;
+    protected Rigidbody2D rb;
+    protected Collider2D cd;
+    [SerializeField] protected float speed;
+    [SerializeField] protected float lifetime;
+    protected float lifetimeTimer;
 
-    [SerializeField] private float lifetime;
-    private float lifetimeTimer;
+    private ObjectPool<Projectile> objectPoolRef;
+
+
+    [Header("Cosine Pattern")]
+    [SerializeField] protected bool isCosinusoidal;
+    [SerializeField] private float frequency = 2;
+    [SerializeField] private float amplitude = 2;
+    [SerializeField] private float constant = 2;
+    [Range(-1,1)][SerializeField] private int direction;
+
+
+    float time;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         cd = GetComponent<Collider2D>();
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         lifetimeTimer -= Time.deltaTime;
 
-        if (lifetimeTimer <= Time.deltaTime)
-            EventsManager.OnProjectileRecycle?.Invoke(this);
+        if (lifetimeTimer < 0)
+            EventsManager.OnProjectileRecycle?.Invoke(objectPoolRef, this);
 
-        rb.linearVelocity = transform.up * speed;
+        if (isCosinusoidal)
+        {
+            float x = amplitude * Mathf.Cos((frequency * time) + constant);
+
+            rb.linearVelocity = new Vector2(x * direction,-speed);
+        }
+        else
+            rb.linearVelocity = transform.up * speed;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected virtual void FixedUpdate()
+    {
+        time += Time.fixedDeltaTime;
+    }
+
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Wall"))
-            EventsManager.OnProjectileRecycle?.Invoke(this);
+            EventsManager.OnProjectileRecycle?.Invoke(objectPoolRef, this);
+
+        if(collision.CompareTag("DeadZone"))
+            EventsManager.OnProjectileRecycle?.Invoke(objectPoolRef, this);
+
+    }
+
+    public void SetObjectPool(ObjectPool<Projectile> projectilePool)
+    {
+        objectPoolRef = projectilePool;
     }
 
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         lifetimeTimer = lifetime;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
-
+        time = 0;
     }
 }
