@@ -1,5 +1,7 @@
 using CustomUnityLibrary;
 using UnityEngine;
+using UnityEngine.UIElements;
+
 public class Player : MonoBehaviour
 {
     [SerializeField] private Projectile[] projectiles;
@@ -12,6 +14,12 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed;
 
     [SerializeField] private float MaxHP;
+    [SerializeField] private float tollerance;
+
+    private float leftBorder;
+    private float rightBorder;
+
+    private Camera cam;
     public float CurrentHP { get; private set; }
 
     private void Awake()
@@ -21,6 +29,11 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        cam = Camera.main;
+
+        leftBorder = (cam.transform.position.x - (cam.orthographicSize * cam.aspect)) + tollerance;
+        rightBorder = (cam.transform.position.x + (cam.orthographicSize * cam.aspect)) - tollerance;
+
         projectilePool = new ObjectPool<Projectile>(projectiles);
         CurrentHP = MaxHP;
         foreach (var projectile in projectiles)
@@ -35,6 +48,8 @@ public class Player : MonoBehaviour
             Shoot();
 
         rb.linearVelocityX = InputManager.Instance.MoveX() * speed;
+
+        transform.position = new Vector2(Mathf.Clamp(transform.position.x, leftBorder, rightBorder), transform.position.y);
     }
 
     public void Shoot()

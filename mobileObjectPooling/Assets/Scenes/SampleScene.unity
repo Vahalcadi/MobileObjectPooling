@@ -1108,7 +1108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &570828485
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1746,6 +1746,7 @@ MonoBehaviour:
   fireRate: 0.3
   speed: 10
   MaxHP: 0
+  tollerance: 0.5
 --- !u!50 &867812728
 Rigidbody2D:
   serializedVersion: 5
@@ -2139,7 +2140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1578251956
 SpriteRenderer:
   m_ObjectHideFlags: 0

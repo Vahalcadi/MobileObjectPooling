@@ -577,6 +577,7 @@ MonoBehaviour:
   fireRate: 0.3
   speed: 0
   MaxHP: 10
+  tollerance: 0.5
   changeSpeedTime: 1
   projectileSpawnerRight: {fileID: 6658271986576335702}
   projectileSpawnerLeft: {fileID: 4615384372183245711}

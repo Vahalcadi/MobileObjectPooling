@@ -300,6 +300,7 @@ MonoBehaviour:
   fireRate: 0.3
   speed: 0
   MaxHP: 2
+  tollerance: 0.5
   changeSpeedTime: 1
 --- !u!1 &8796931934709653205
 GameObject:

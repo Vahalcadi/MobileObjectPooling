@@ -14,12 +14,16 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float speed;
 
     [SerializeField] private float MaxHP;
+    [SerializeField] private float tollerance;
+
 
     protected ObjectPool<Enemy> objectPoolRef;
 
     public float CurrentHP { get; private set; }
 
     private float dir = 1;
+    private float changeDirTime = 0.3f;
+    private float changeDirTimeCounter;
 
     private float activationTime;
 
@@ -28,6 +32,11 @@ public class Enemy : MonoBehaviour
 
     public float Speed { get; set; }
 
+    private float leftBorder;
+    private float rightBorder;
+
+    private Camera cam;
+
     public virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,6 +44,12 @@ public class Enemy : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void Start()
     {
+
+        cam = Camera.main;
+
+        leftBorder = (cam.transform.position.x - (cam.orthographicSize * cam.aspect)) + tollerance;
+        rightBorder = (cam.transform.position.x + (cam.orthographicSize * cam.aspect)) - tollerance;
+
         Speed = speed;
         projectilePool = new ObjectPool<Projectile>(projectiles);
 
@@ -75,11 +90,24 @@ public class Enemy : MonoBehaviour
         rb.linearVelocityX = dir * Speed;
 
         speedTimer -= Time.deltaTime;
+        changeDirTimeCounter -= Time.deltaTime;
 
         if (speedTimer < 0)
         {
             Speed = Random.Range(speed / 2, speed * 1.5f);
             speedTimer = changeSpeedTime;
+        }
+
+        transform.position = new Vector2(Mathf.Clamp(transform.position.x, leftBorder, rightBorder), transform.position.y);
+
+        if((transform.position.x <= leftBorder) || (transform.position.x >= rightBorder))
+        {
+
+            if (changeDirTimeCounter < 0f)
+            {
+                dir = -dir;
+                changeDirTimeCounter = changeDirTime;
+            }
         }
     }
 
@@ -100,8 +128,7 @@ public class Enemy : MonoBehaviour
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Wall"))
-            dir = -dir;
+
     }
 
     private void OnEnable()
