@@ -1,14 +1,15 @@
-using UnityEngine;
 using CustomUnityLibrary;
+using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     protected Rigidbody2D rb;
     protected Collider2D cd;
     [SerializeField] protected float speed;
     [SerializeField] protected float lifetime;
+    [SerializeField] protected float damage;
     protected float lifetimeTimer;
 
-    private ObjectPool<Projectile> objectPoolRef;
+    protected ObjectPool<Projectile> objectPoolRef;
 
 
     [Header("Cosine Pattern")]
@@ -16,7 +17,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float frequency = 2;
     [SerializeField] private float amplitude = 2;
     [SerializeField] private float constant = 2;
-    [Range(-1,1)][SerializeField] private int direction;
+    [Range(-1, 1)][SerializeField] private int direction;
 
 
     float time;
@@ -39,7 +40,7 @@ public class Projectile : MonoBehaviour
         {
             float x = amplitude * Mathf.Cos((frequency * time) + constant);
 
-            rb.linearVelocity = new Vector2(x * direction,-speed);
+            rb.linearVelocity = new Vector2(x * direction, -speed);
         }
         else
             rb.linearVelocity = transform.up * speed;
@@ -55,7 +56,7 @@ public class Projectile : MonoBehaviour
         if (collision.CompareTag("Wall"))
             EventsManager.OnProjectileRecycle?.Invoke(objectPoolRef, this);
 
-        if(collision.CompareTag("DeadZone"))
+        if (collision.CompareTag("DeadZone"))
             EventsManager.OnProjectileRecycle?.Invoke(objectPoolRef, this);
 
     }

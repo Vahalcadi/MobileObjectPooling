@@ -1,5 +1,4 @@
 using CustomUnityLibrary;
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,8 +13,15 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private float speed;
 
+    [SerializeField] private float MaxHP;
+
+    protected ObjectPool<Enemy> objectPoolRef;
+
+    public float CurrentHP { get; private set; }
+
     private float dir = 1;
 
+    private float activationTime;
 
     [SerializeField] private float changeSpeedTime;
     private float speedTimer;
@@ -34,15 +40,29 @@ public class Enemy : MonoBehaviour
 
         foreach (var projectile in projectiles)
             projectile.SetObjectPool(projectilePool);
+
     }
 
     // Update is called once per frame
     public virtual void Update()
     {
+        activationTime -= Time.deltaTime;
+
+        if (activationTime > 0f)
+            return;
+
         CanShoot();
         ChangeSpeed();
     }
 
+    public virtual void TakeDamage(float damage)
+    {
+        CurrentHP = Mathf.Clamp(CurrentHP - damage, 0, MaxHP);
+
+        if (CurrentHP <= 0)
+            EventsManager.OnEnemyRecycle?.Invoke(objectPoolRef, this);
+
+    }
     public virtual void CanShoot()
     {
         fireRateTimer -= Time.deltaTime;
@@ -73,6 +93,11 @@ public class Enemy : MonoBehaviour
         fireRateTimer = fireRate;
     }
 
+    public void SetObjectPool(ObjectPool<Enemy> objPool)
+    {
+        objectPoolRef = objPool;
+    }
+
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.collider.CompareTag("Wall"))
@@ -81,6 +106,8 @@ public class Enemy : MonoBehaviour
 
     private void OnEnable()
     {
+        activationTime = Random.Range(0.5f, 1.3f);
+        CurrentHP = MaxHP;
     }
 
     private void OnDisable()

@@ -1,5 +1,4 @@
 using CustomUnityLibrary;
-using System;
 using UnityEngine;
 public class Player : MonoBehaviour
 {
@@ -12,6 +11,9 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     [SerializeField] private float speed;
 
+    [SerializeField] private float MaxHP;
+    public float CurrentHP { get; private set; }
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -20,7 +22,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         projectilePool = new ObjectPool<Projectile>(projectiles);
-
+        CurrentHP = MaxHP;
         foreach (var projectile in projectiles)
             projectile.SetObjectPool(projectilePool);
     }
@@ -44,6 +46,11 @@ public class Player : MonoBehaviour
         projectile.gameObject.SetActive(true);
         fireRateTimer = fireRate;
 
+    }
+
+    public virtual void TakeDamage(float damage)
+    {
+        CurrentHP = Mathf.Clamp(CurrentHP - damage, 0, MaxHP);
     }
 
     private void OnEnable()

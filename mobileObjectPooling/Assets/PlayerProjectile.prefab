@@ -175,5 +175,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a2f22b8d38be084bbe6862f57739c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 5
   lifetime: 3
+  damage: 1
+  isCosinusoidal: 0
+  frequency: 2
+  amplitude: 2
+  constant: 2
+  direction: 0

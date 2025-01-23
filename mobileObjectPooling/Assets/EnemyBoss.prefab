@@ -411,7 +411,7 @@ GameObject:
   - component: {fileID: 2738840067117428973}
   m_Layer: 6
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -425,7 +425,7 @@ Transform:
   m_GameObject: {fileID: 5752804594538387663}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.2458379, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -576,6 +576,7 @@ MonoBehaviour:
   projectileSpawner: {fileID: 1346050297309471395}
   fireRate: 0.3
   speed: 0
+  MaxHP: 10
   changeSpeedTime: 1
   projectileSpawnerRight: {fileID: 6658271986576335702}
   projectileSpawnerLeft: {fileID: 4615384372183245711}
