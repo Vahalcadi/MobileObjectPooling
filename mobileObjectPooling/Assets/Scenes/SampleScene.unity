@@ -466,10 +466,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyCosine
       objectReference: {fileID: 0}
-    - target: {fileID: 8796931934709653205, guid: 593ff05506629a54798e1a0f0fc0f824, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -699,7 +695,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -781,10 +777,6 @@ PrefabInstance:
     - target: {fileID: 8681578074714013810, guid: 6fc0c7c9681bb41449fbbd5ea1a4e988, type: 3}
       propertyPath: m_Name
       value: EnemyStraight
-      objectReference: {fileID: 0}
-    - target: {fileID: 8681578074714013810, guid: 6fc0c7c9681bb41449fbbd5ea1a4e988, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1746,7 +1738,7 @@ MonoBehaviour:
   fireRate: 0.3
   speed: 10
   MaxHP: 0
-  tollerance: 0.5
+  tollerance: {x: 0.5, y: 0.5}
 --- !u!50 &867812728
 Rigidbody2D:
   serializedVersion: 5
@@ -1773,7 +1765,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!58 &867812729
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1904,45 +1896,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 946283915}
     m_Modifications:
-    - target: {fileID: 4230357550420938111, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5081616694674345181, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
       propertyPath: m_Name
       value: EnemyBoss
-      objectReference: {fileID: 0}
-    - target: {fileID: 5081616694674345181, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6703894939361721423, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7243735446472658211, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7494604772062907562, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7859999281019219955, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8045790508150747552, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8296408058109903350, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8300694002633239715, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
-      propertyPath: isCosinusoidal
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8316261741831029942, guid: c28120170b8b50a498fc48e3576be6b3, type: 3}
       propertyPath: m_LocalPosition.x

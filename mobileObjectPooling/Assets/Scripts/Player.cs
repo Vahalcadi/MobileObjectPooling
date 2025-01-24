@@ -14,10 +14,13 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed;
 
     [SerializeField] private float MaxHP;
-    [SerializeField] private float tollerance;
+    [SerializeField] private Vector2 tollerance;
 
     private float leftBorder;
     private float rightBorder;
+
+    private float bottomBoundary;
+    private float upBoundary;
 
     private Camera cam;
     public float CurrentHP { get; private set; }
@@ -31,8 +34,11 @@ public class Player : MonoBehaviour
     {
         cam = Camera.main;
 
-        leftBorder = (cam.transform.position.x - (cam.orthographicSize * cam.aspect)) + tollerance;
-        rightBorder = (cam.transform.position.x + (cam.orthographicSize * cam.aspect)) - tollerance;
+        leftBorder = (cam.transform.position.x - (cam.orthographicSize * cam.aspect)) + tollerance.x;
+        rightBorder = (cam.transform.position.x + (cam.orthographicSize * cam.aspect)) - tollerance.y;
+
+        bottomBoundary = cam.transform.position.y - cam.orthographicSize;
+        upBoundary = cam.transform.position.y + cam.orthographicSize;
 
         projectilePool = new ObjectPool<Projectile>(projectiles);
         CurrentHP = MaxHP;
@@ -47,9 +53,9 @@ public class Player : MonoBehaviour
         if (InputManager.Instance.Shoot() && fireRateTimer < 0)
             Shoot();
 
-        rb.linearVelocityX = InputManager.Instance.MoveX() * speed;
+        rb.linearVelocity = new Vector2(InputManager.Instance.Move().x, -InputManager.Instance.Move().z) * speed;
 
-        transform.position = new Vector2(Mathf.Clamp(transform.position.x, leftBorder, rightBorder), transform.position.y);
+        transform.position = new Vector2(Mathf.Clamp(transform.position.x, leftBorder, rightBorder), Mathf.Clamp(transform.position.y, bottomBoundary, upBoundary));
     }
 
     public void Shoot()

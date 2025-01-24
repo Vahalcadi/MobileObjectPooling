@@ -58,15 +58,15 @@ public class GameManager : MonoBehaviour
         float x = Random.Range(-SpawnAreaCollider.bounds.extents.x, SpawnAreaCollider.bounds.extents.x) + SpawnArea.transform.position.x;
         float y = Random.Range(-SpawnAreaCollider.bounds.extents.y, SpawnAreaCollider.bounds.extents.y) + SpawnArea.transform.position.y;
 
-        enemy.transform.parent.position = new Vector2(x, y);
-        enemy.transform.parent.gameObject.SetActive(true);
+        enemy.transform.position = new Vector2(x, y);
+        enemy.transform.gameObject.SetActive(true);
 
         enemyCount++;
     }
 
     private void RecycleEnemies(ObjectPool<Enemy> enemyPool, Enemy enemy)
     {
-        enemy.transform.parent.gameObject.SetActive(false);
+        enemy.transform.gameObject.SetActive(false);
         enemyPool.RecycleObject(enemy);
 
         if (enemyCount < maxEnemiesCount)
