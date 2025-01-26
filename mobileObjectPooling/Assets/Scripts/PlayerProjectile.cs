@@ -17,4 +17,10 @@ public class PlayerProjectile : Projectile
             EventsManager.OnProjectileRecycle?.Invoke(objectPoolRef, this);
         }
     }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        Player.OnProjectileRecycle?.Invoke();
+    }
 }

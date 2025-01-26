@@ -70,4 +70,9 @@ public class EnemyBoss : Enemy
         fireRateLeftCannonTimer = Random.Range(fireRateLeftCannon / 2f, fireRateLeftCannon * 1.5f); ;
 
     }
+
+    private void OnDisable()
+    {
+        EventsManager.OnBossKilled?.Invoke();
+    }
 }

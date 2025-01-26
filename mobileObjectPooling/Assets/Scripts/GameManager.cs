@@ -1,12 +1,14 @@
 using CustomUnityLibrary;
+using System.Collections;
 using UnityEngine;
-
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     private ObjectPool<Enemy> enemyStraightPool;
     private ObjectPool<Enemy> enemyCosinePool;
     private ObjectPool<Enemy> enemyBossPool;
+
+    [SerializeField] private int playerLives;
 
     [SerializeField] private Enemy[] enemiesStraight;
     [SerializeField] private Enemy[] enemiesCosine;
@@ -18,6 +20,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int maxEnemiesCount;
     private int enemyCount;
 
+    public int CurrentPlayerLives { get; set; }
+
     private void Awake()
     {
         if (Instance != null)
@@ -28,6 +32,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1;
+
+        CurrentPlayerLives = playerLives;
+        UIManager.Instance.UpdatePlayerLives(CurrentPlayerLives);
+
         enemyCount = 0;
 
         SpawnAreaCollider = SpawnArea.GetComponent<Collider2D>();
@@ -46,10 +55,6 @@ public class GameManager : MonoBehaviour
             obj.SetObjectPool(enemyBossPool);
 
         GenerateEnemy(enemyStraightPool);
-    }
-
-    private void Update()
-    {
     }
     private void GenerateEnemy(ObjectPool<Enemy> enemyPool)
     {
@@ -86,13 +91,41 @@ public class GameManager : MonoBehaviour
 
     }
 
+    private void BossKilled()
+    {
+        CurrentPlayerLives = playerLives;
+    }
+
+    private void PlayerKilled()
+    {
+        
+        if (CurrentPlayerLives > 0)
+            StartCoroutine(RespawnPlayer());
+        else
+            UIManager.Instance.OpenEndGameScreen();
+
+        CurrentPlayerLives = Mathf.Clamp(CurrentPlayerLives - 1, 0, playerLives);
+        UIManager.Instance.UpdatePlayerLives(CurrentPlayerLives);
+    }
+
+    private IEnumerator RespawnPlayer()
+    {
+        yield return new WaitForSeconds(1f);
+
+        PlayerManager.Instance.Player.gameObject.SetActive(true);
+    }
+
     private void OnEnable()
     {
+        EventsManager.OnPlayerKilled += PlayerKilled;
         EventsManager.OnEnemyRecycle += RecycleEnemies;
+        EventsManager.OnBossKilled += BossKilled;
     }
 
     private void OnDisable()
     {
+        EventsManager.OnBossKilled -= BossKilled;
+        EventsManager.OnPlayerKilled -= PlayerKilled;
         EventsManager.OnEnemyRecycle -= RecycleEnemies;
     }
 }

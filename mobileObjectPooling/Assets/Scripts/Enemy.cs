@@ -1,9 +1,12 @@
 using CustomUnityLibrary;
+using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
+    public static Action OnProjectileRecycle;
+
     [SerializeField] private Projectile[] projectiles;
     [SerializeField] private Transform projectileSpawner;
 
@@ -16,8 +19,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float MaxHP;
     [SerializeField] private float tollerance;
 
+    protected ObjectPool<Enemy> enemyPoolRef; //the reference to the pool where this enemy is located
 
-    protected ObjectPool<Enemy> objectPoolRef;
 
     public float CurrentHP { get; private set; }
 
@@ -56,6 +59,8 @@ public class Enemy : MonoBehaviour
         foreach (var projectile in projectiles)
             projectile.SetObjectPool(projectilePool);
 
+
+        UIManager.Instance.SetEnemyInfo(projectilePool.TotalObjsCount, projectilePool.TotalObjsCount, projectilePool.UsedObjsCount);
     }
 
     // Update is called once per frame
@@ -75,7 +80,7 @@ public class Enemy : MonoBehaviour
         CurrentHP = Mathf.Clamp(CurrentHP - damage, 0, MaxHP);
 
         if (CurrentHP <= 0)
-            EventsManager.OnEnemyRecycle?.Invoke(objectPoolRef, this);
+            EventsManager.OnEnemyRecycle?.Invoke(enemyPoolRef, this);
 
     }
     public virtual void CanShoot()
@@ -119,11 +124,18 @@ public class Enemy : MonoBehaviour
 
         projectile.gameObject.SetActive(true);
         fireRateTimer = fireRate;
+
+        UIManager.Instance.EnemyUpdateUsedObjects(projectilePool.UsedObjsCount);
+    }
+
+    public void ProjectileRecycle()
+    {
+        UIManager.Instance.EnemyUpdateUsedObjects(projectilePool.UsedObjsCount);
     }
 
     public void SetObjectPool(ObjectPool<Enemy> objPool)
     {
-        objectPoolRef = objPool;
+        enemyPoolRef = objPool;
     }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
@@ -133,11 +145,13 @@ public class Enemy : MonoBehaviour
 
     private void OnEnable()
     {
+        OnProjectileRecycle += ProjectileRecycle;
         activationTime = Random.Range(0.5f, 1.3f);
         CurrentHP = MaxHP;
     }
 
     private void OnDisable()
     {
+        OnProjectileRecycle -= ProjectileRecycle;
     }
 }

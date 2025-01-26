@@ -1,9 +1,11 @@
 using CustomUnityLibrary;
+using System;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
+    public static Action OnProjectileRecycle;
+
     [SerializeField] private Projectile[] projectiles;
     [SerializeField] private Transform projectileSpawner;
 
@@ -25,6 +27,9 @@ public class Player : MonoBehaviour
     private Camera cam;
     public float CurrentHP { get; private set; }
 
+    private bool isInvincible;
+    private float invincibilityTimer;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -41,15 +46,22 @@ public class Player : MonoBehaviour
         upBoundary = cam.transform.position.y + cam.orthographicSize;
 
         projectilePool = new ObjectPool<Projectile>(projectiles);
-        CurrentHP = MaxHP;
+
         foreach (var projectile in projectiles)
             projectile.SetObjectPool(projectilePool);
+
+        UIManager.Instance.SetPlayerInfo(projectilePool.TotalObjsCount, projectilePool.TotalObjsCount, projectilePool.UsedObjsCount);
     }
 
     // Update is called once per frame
     void Update()
     {
+        invincibilityTimer -= Time.deltaTime;
         fireRateTimer -= Time.deltaTime;
+
+        if (invincibilityTimer < 0)
+            isInvincible = false;
+
         if (InputManager.Instance.Shoot() && fireRateTimer < 0)
             Shoot();
 
@@ -67,18 +79,38 @@ public class Player : MonoBehaviour
         projectile.gameObject.SetActive(true);
         fireRateTimer = fireRate;
 
+        UIManager.Instance.PlayerUpdateUsedObjects(projectilePool.UsedObjsCount);
+    }
+
+    public void ProjectileRecycle()
+    {
+        UIManager.Instance.PlayerUpdateUsedObjects(projectilePool.UsedObjsCount);
     }
 
     public virtual void TakeDamage(float damage)
     {
+        if (isInvincible)
+            return;
+
         CurrentHP = Mathf.Clamp(CurrentHP - damage, 0, MaxHP);
+        UIManager.Instance.UpdatePlayerHP((int)CurrentHP);
+        invincibilityTimer = 0.5f;
+
+        if (CurrentHP == 0)
+            gameObject.SetActive(false);
     }
 
     private void OnEnable()
     {
+        invincibilityTimer = 1f;
+        CurrentHP = MaxHP;
+        UIManager.Instance.UpdatePlayerHP((int)CurrentHP);
+        OnProjectileRecycle += ProjectileRecycle;
     }
 
     private void OnDisable()
     {
+        OnProjectileRecycle -= ProjectileRecycle;
+        EventsManager.OnPlayerKilled?.Invoke();
     }
 }
