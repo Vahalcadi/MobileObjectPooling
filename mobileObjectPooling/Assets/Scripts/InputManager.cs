@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class InputManager : MonoBehaviour
             Instance = this;
 
         controls = new PlayerControls();
+
+        InputSystem.EnableDevice(Accelerometer.current);
     }
 
     public bool Shoot()
